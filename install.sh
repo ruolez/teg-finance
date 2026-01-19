@@ -465,6 +465,23 @@ restore_data() {
     rm -rf "$BACKUP_DIR"
 }
 
+run_database_migrations() {
+    print_info "Running database migrations..."
+
+    # Wait for database to be ready
+    sleep 5
+
+    # Run admin password reset migration
+    if [[ -f "$INSTALL_DIR/backend/migrations/reset_admin_password.py" ]]; then
+        docker exec teg-backend python3 /app/backend/migrations/reset_admin_password.py
+        if [[ $? -eq 0 ]]; then
+            print_success "Admin password synced from environment"
+        else
+            print_warning "Migration script completed with warnings"
+        fi
+    fi
+}
+
 update_installation() {
     if [[ ! -d "$INSTALL_DIR" ]]; then
         print_error "TEG Finance is not installed at $INSTALL_DIR"
@@ -496,6 +513,9 @@ update_installation() {
     # Rebuild and start
     print_info "Rebuilding and starting services..."
     docker compose -f docker-compose.prod.yml up -d --build
+
+    # Run database migrations
+    run_database_migrations
 
     # Reload nginx (in case config changed)
     systemctl reload nginx
