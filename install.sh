@@ -204,8 +204,15 @@ EOF
 
 setup_nginx() {
     local domain="$1"
+    local include_www="$2"
 
     print_info "Configuring Nginx..."
+
+    # Determine server_name based on www preference
+    local server_names="$domain"
+    if [[ "$include_www" == "yes" ]]; then
+        server_names="$domain www.$domain"
+    fi
 
     # Create nginx configuration (HTTP only initially, certbot will add SSL)
     cat > "$NGINX_CONF" << EOF
@@ -219,7 +226,7 @@ upstream teg_backend {
 server {
     listen 80;
     listen [::]:80;
-    server_name $domain www.$domain;
+    server_name $server_names;
 
     # Security headers
     add_header X-Frame-Options "SAMEORIGIN" always;
@@ -288,17 +295,27 @@ EOF
 setup_ssl() {
     local domain="$1"
     local email="$2"
+    local include_www="$3"
 
     print_info "Obtaining SSL certificate from Let's Encrypt..."
 
-    # Obtain certificate
-    certbot --nginx \
-        -d "$domain" \
-        -d "www.$domain" \
-        --non-interactive \
-        --agree-tos \
-        --email "$email" \
-        --redirect
+    # Build certbot command based on www preference
+    if [[ "$include_www" == "yes" ]]; then
+        certbot --nginx \
+            -d "$domain" \
+            -d "www.$domain" \
+            --non-interactive \
+            --agree-tos \
+            --email "$email" \
+            --redirect
+    else
+        certbot --nginx \
+            -d "$domain" \
+            --non-interactive \
+            --agree-tos \
+            --email "$email" \
+            --redirect
+    fi
 
     # Verify auto-renewal is set up
     systemctl enable certbot.timer
@@ -586,9 +603,25 @@ install_fresh() {
         exit 1
     fi
 
+    # Ask about www subdomain
+    echo ""
+    print_info "Do you have a DNS record for www.$DOMAIN?"
+    print_info "(Both $DOMAIN and www.$DOMAIN must point to this server's IP)"
+    echo ""
+    if confirm "Include www.$DOMAIN in SSL certificate?"; then
+        INCLUDE_WWW="yes"
+    else
+        INCLUDE_WWW="no"
+    fi
+
     echo ""
     print_info "Domain: $DOMAIN"
-    print_info "Email: $EMAIL"
+    if [[ "$INCLUDE_WWW" == "yes" ]]; then
+        print_info "WWW:    www.$DOMAIN (included)"
+    else
+        print_info "WWW:    Not included"
+    fi
+    print_info "Email:  $EMAIL"
     echo ""
 
     if ! confirm "Proceed with installation?"; then
@@ -607,7 +640,7 @@ install_fresh() {
     create_production_compose
 
     print_header "Configuring Web Server"
-    setup_nginx "$DOMAIN"
+    setup_nginx "$DOMAIN" "$INCLUDE_WWW"
 
     print_header "Starting Services"
     start_services
@@ -617,7 +650,7 @@ install_fresh() {
     sleep 10
 
     print_header "Setting Up SSL"
-    setup_ssl "$DOMAIN" "$EMAIL"
+    setup_ssl "$DOMAIN" "$EMAIL" "$INCLUDE_WWW"
 
     print_header "Finalizing"
     create_systemd_service
