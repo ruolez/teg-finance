@@ -588,7 +588,12 @@ def create_audit_log(user_id: str, action: str, entity_type: str = None,
 def create_admin_user(username: str, email: str, password_hash: str) -> Optional[Dict[str, Any]]:
     existing = get_user_by_username(username)
     if existing:
-        return existing
+        # Update password hash if user exists (ensures password stays in sync with env var)
+        db.execute(
+            "UPDATE users SET password_hash = %s, email = %s WHERE id = %s",
+            (password_hash, email, existing['id'])
+        )
+        return get_user_by_id(existing['id'])
 
     return db.insert_returning(
         """INSERT INTO users (username, email, password_hash, is_active)

@@ -1201,21 +1201,25 @@ def ratelimit_handler(e):
 # ============================================
 
 def init_admin_user():
-    """Create initial admin user if none exists"""
+    """Create or update admin user from environment variables"""
     from backend.auth import hash_password
 
     try:
+        password_hash = hash_password(config.ADMIN_PASSWORD)
         existing = db.get_user_by_username(config.ADMIN_USERNAME)
-        if not existing:
-            password_hash = hash_password(config.ADMIN_PASSWORD)
-            db.create_admin_user(
-                config.ADMIN_USERNAME,
-                config.ADMIN_EMAIL,
-                password_hash
-            )
+
+        db.create_admin_user(
+            config.ADMIN_USERNAME,
+            config.ADMIN_EMAIL,
+            password_hash
+        )
+
+        if existing:
+            logger.info(f"Updated admin user password: {config.ADMIN_USERNAME}")
+        else:
             logger.info(f"Created initial admin user: {config.ADMIN_USERNAME}")
     except Exception as e:
-        logger.error(f"Failed to create admin user: {e}")
+        logger.error(f"Failed to create/update admin user: {e}")
 
 
 # Initialize on first request
