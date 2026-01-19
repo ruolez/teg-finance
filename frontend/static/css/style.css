@@ -1364,6 +1364,9 @@ a {
     .hero {
         min-height: auto;
         padding: 140px 0 80px;
+        background-attachment: scroll;
+        background-position: center center;
+        background-size: cover;
     }
 
     .hero-tagline {
@@ -1387,8 +1390,16 @@ a {
         font-size: 32px;
     }
 
+    .page-header {
+        background-attachment: scroll;
+    }
+
     .page-header h1 {
         font-size: 36px;
+    }
+
+    .cta {
+        background-attachment: scroll;
     }
 
     .contact-form .form-row {
@@ -1410,6 +1421,14 @@ a {
         grid-template-columns: 1fr;
     }
 
+    .about-content {
+        padding: 40px 24px;
+    }
+
+    .about-image {
+        min-height: 300px;
+    }
+
     .main-content {
         padding: 30px;
     }
@@ -1426,6 +1445,9 @@ a {
 
     .hero {
         padding: 120px 0 60px;
+        background-attachment: scroll;
+        background-position: center center;
+        background-size: cover;
     }
 
     .hero-tagline span {
@@ -1450,5 +1472,25 @@ a {
 
     .stat-number {
         font-size: 36px;
+    }
+
+    .about-content {
+        padding: 30px 16px;
+    }
+
+    .about-image {
+        min-height: 250px;
+    }
+
+    .about-image img {
+        object-position: center center;
+    }
+
+    .cta-card {
+        padding: 30px 20px;
+    }
+
+    .cta-card h2 {
+        font-size: 32px;
     }
 }
