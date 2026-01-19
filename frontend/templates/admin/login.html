@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Login - TEG Finance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #16A085;
+            --primary-hover: #138D75;
+            --primary-light: #E8F6F3;
+            --background: #F8F9FA;
+            --surface: #FFFFFF;
+            --text-primary: #1A1A1A;
+            --text-secondary: #5F6368;
+            --error: #DC3545;
+            --success: #28A745;
+            --border: #E0E0E0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, #0E6655 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            background: var(--surface);
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 420px;
+            padding: 48px 40px;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+
+        .logo-icon {
+            width: 64px;
+            height: 64px;
+            background: var(--primary);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 16px;
+        }
+
+        .logo-icon .material-icons {
+            font-size: 32px;
+            color: white;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+
+        .logo p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .input-wrapper {
+            position: relative;
+        }
+
+        .input-wrapper .material-icons {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 20px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 14px 14px 44px;
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            font-size: 15px;
+            font-family: inherit;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-light);
+        }
+
+        .form-group input::placeholder {
+            color: #999;
+        }
+
+        .error-message {
+            background: #FEE2E2;
+            color: var(--error);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .error-message.show {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-message .material-icons {
+            font-size: 20px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px 24px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        .btn .spinner {
+            width: 20px;
+            height: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            display: none;
+        }
+
+        .btn.loading .spinner {
+            display: block;
+        }
+
+        .btn.loading .btn-text {
+            display: none;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .forgot-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .forgot-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .forgot-link a:hover {
+            text-decoration: underline;
+        }
+
+        /* 2FA Step */
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+
+        .back-btn:hover {
+            color: var(--primary);
+        }
+
+        .two-factor-info {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .two-factor-info .material-icons {
+            font-size: 48px;
+            color: var(--primary);
+            margin-bottom: 12px;
+        }
+
+        .two-factor-info h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .two-factor-info p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .code-input {
+            text-align: center;
+            font-size: 24px;
+            letter-spacing: 8px;
+            font-weight: 600;
+        }
+
+        /* Forgot Password Step */
+        .success-message {
+            background: #D4EDDA;
+            color: var(--success);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-message.show {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .success-message .material-icons {
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Login Step -->
+        <div id="loginStep" class="step active">
+            <div class="logo">
+                <div class="logo-icon">
+                    <span class="material-icons">account_balance</span>
+                </div>
+                <h1>Admin Login</h1>
+                <p>TEG Finance Dashboard</p>
+            </div>
+
+            <div id="loginError" class="error-message">
+                <span class="material-icons">error</span>
+                <span id="loginErrorText"></span>
+            </div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <div class="input-wrapper">
+                        <span class="material-icons">person</span>
+                        <input type="text" id="username" name="username" placeholder="Enter your username" required autocomplete="username">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <span class="material-icons">lock</span>
+                        <input type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="current-password">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn" id="loginBtn">
+                    <span class="spinner"></span>
+                    <span class="btn-text">Sign In</span>
+                </button>
+            </form>
+
+            <div class="forgot-link">
+                <a href="#" id="forgotPasswordLink">Forgot your password?</a>
+            </div>
+        </div>
+
+        <!-- 2FA Step -->
+        <div id="twoFactorStep" class="step">
+            <button class="back-btn" id="backToLogin">
+                <span class="material-icons">arrow_back</span>
+                Back to login
+            </button>
+
+            <div class="two-factor-info">
+                <span class="material-icons">security</span>
+                <h2>Two-Factor Authentication</h2>
+                <p>Enter the 6-digit code from your authenticator app</p>
+            </div>
+
+            <div id="twoFactorError" class="error-message">
+                <span class="material-icons">error</span>
+                <span id="twoFactorErrorText"></span>
+            </div>
+
+            <form id="twoFactorForm">
+                <input type="hidden" id="userId" name="user_id">
+
+                <div class="form-group">
+                    <label for="code">Verification Code</label>
+                    <div class="input-wrapper">
+                        <span class="material-icons">pin</span>
+                        <input type="text" id="code" name="code" class="code-input" placeholder="000000" maxlength="6" pattern="[0-9]{6}" required autocomplete="one-time-code">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn" id="verifyBtn">
+                    <span class="spinner"></span>
+                    <span class="btn-text">Verify</span>
+                </button>
+            </form>
+        </div>
+
+        <!-- Forgot Password Step -->
+        <div id="forgotPasswordStep" class="step">
+            <button class="back-btn" id="backToLoginFromForgot">
+                <span class="material-icons">arrow_back</span>
+                Back to login
+            </button>
+
+            <div class="two-factor-info">
+                <span class="material-icons">email</span>
+                <h2>Reset Password</h2>
+                <p>Enter your email address to receive a reset link</p>
+            </div>
+
+            <div id="forgotError" class="error-message">
+                <span class="material-icons">error</span>
+                <span id="forgotErrorText"></span>
+            </div>
+
+            <div id="forgotSuccess" class="success-message">
+                <span class="material-icons">check_circle</span>
+                <span id="forgotSuccessText"></span>
+            </div>
+
+            <form id="forgotPasswordForm">
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-wrapper">
+                        <span class="material-icons">email</span>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required autocomplete="email">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn" id="forgotBtn">
+                    <span class="spinner"></span>
+                    <span class="btn-text">Send Reset Link</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script src="/static/js/admin/auth.js"></script>
+</body>
+</html>

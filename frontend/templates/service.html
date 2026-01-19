@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.meta_title or page.title }} - {{ settings.site_name or 'TEG Finance' }}{% endblock %}
+{% block meta_description %}{{ page.meta_description or page.title + ' - Professional financial services.' }}{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header service-header">
+    <div class="container">
+        {% if page.service_icon %}
+        <div class="service-header-icon">
+            <span class="material-icons">{{ page.service_icon }}</span>
+        </div>
+        {% endif %}
+        <h1>{{ page.title }}</h1>
+        {% if page.meta_description %}
+        <p>{{ page.meta_description }}</p>
+        {% endif %}
+    </div>
+</section>
+
+<!-- Service Content -->
+<section class="service-content">
+    <div class="container">
+        <div class="content-grid">
+            <div class="main-content">
+                {{ page.content|safe }}
+
+                <div class="cta-box">
+                    <h3>Ready to Get Started?</h3>
+                    <p>Contact us today to learn more about our {{ page.title|lower }} and how we can help you.</p>
+                    <a href="/contact" class="btn btn-primary">
+                        Schedule Consultation
+                        <span class="material-icons">arrow_forward</span>
+                    </a>
+                </div>
+            </div>
+
+            <aside class="sidebar">
+                <div class="sidebar-card">
+                    <h3>Our Services</h3>
+                    <ul class="service-nav">
+                        {% for service in services %}
+                        <li class="{% if service.slug == page.slug %}active{% endif %}">
+                            <a href="/services/{{ service.slug }}">
+                                <span class="material-icons">{{ service.service_icon or 'description' }}</span>
+                                {{ service.title }}
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="sidebar-card highlight">
+                    <h3>Need Help?</h3>
+                    <p>Our team is ready to answer your questions and provide expert guidance.</p>
+                    {% if settings.contact_phone %}
+                    <a href="tel:{{ settings.contact_phone | replace(' ', '') | replace('(', '') | replace(')', '') | replace('-', '') }}" class="contact-link">
+                        <span class="material-icons">phone</span>
+                        {{ settings.contact_phone }}
+                    </a>
+                    {% endif %}
+                    {% if settings.contact_email %}
+                    <a href="mailto:{{ settings.contact_email }}" class="contact-link">
+                        <span class="material-icons">email</span>
+                        {{ settings.contact_email }}
+                    </a>
+                    {% endif %}
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+{% endblock %}

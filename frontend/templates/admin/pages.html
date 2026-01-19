@@ -1,0 +1,104 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Pages{% endblock %}
+{% block page_title %}Pages{% endblock %}
+
+{% block content %}
+<div class="pages-container">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">All Pages</h2>
+            <a href="/admin/pages/new" class="btn btn-primary">
+                <span class="material-icons">add</span>
+                New Page
+            </a>
+        </div>
+        <div class="card-body">
+            {% if pages %}
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>URL</th>
+                            <th>Type</th>
+                            <th>Status</th>
+                            <th>Updated</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for page in pages %}
+                        <tr>
+                            <td>
+                                <strong>{{ page.title }}</strong>
+                            </td>
+                            <td>
+                                <code>/{% if page.is_service_page %}services/{% endif %}{{ page.slug }}</code>
+                            </td>
+                            <td>
+                                {% if page.is_service_page %}
+                                <span class="badge badge-info">Service</span>
+                                {% else %}
+                                <span class="badge badge-secondary">Page</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if page.is_published %}
+                                <span class="badge badge-success">Published</span>
+                                {% else %}
+                                <span class="badge badge-warning">Draft</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ page.updated_at.strftime('%b %d, %Y') if page.updated_at else 'N/A' }}</td>
+                            <td>
+                                <div class="table-actions">
+                                    <a href="/admin/pages/{{ page.id }}" class="btn btn-secondary btn-icon" title="Edit">
+                                        <span class="material-icons">edit</span>
+                                    </a>
+                                    <button class="btn btn-secondary btn-icon toggle-publish" data-id="{{ page.id }}" data-published="{{ page.is_published|lower }}" title="Toggle Publish">
+                                        <span class="material-icons">{% if page.is_published %}visibility_off{% else %}visibility{% endif %}</span>
+                                    </button>
+                                    <button class="btn btn-danger btn-icon delete-page" data-id="{{ page.id }}" data-title="{{ page.title }}" title="Delete">
+                                        <span class="material-icons">delete</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <span class="material-icons">article</span>
+                <h3>No pages yet</h3>
+                <p>Create your first page to get started</p>
+                <a href="/admin/pages/new" class="btn btn-primary" style="margin-top: 16px;">
+                    <span class="material-icons">add</span>
+                    Create Page
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.badge-secondary {
+    background: #E9ECEF;
+    color: #495057;
+}
+
+code {
+    background: var(--background);
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 13px;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/admin/pages.js"></script>
+{% endblock %}

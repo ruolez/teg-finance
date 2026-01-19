@@ -1,0 +1,216 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Images{% endblock %}
+{% block page_title %}Image Library{% endblock %}
+
+{% block content %}
+<div class="images-container">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">All Images</h2>
+            <button class="btn btn-primary" id="uploadBtn">
+                <span class="material-icons">cloud_upload</span>
+                Upload Image
+            </button>
+        </div>
+        <div class="card-body">
+            {% if images %}
+            <div class="image-gallery">
+                {% for image in images %}
+                <div class="image-card" data-id="{{ image.id }}">
+                    <div class="image-preview">
+                        <img src="/uploads/{{ image.filename }}" alt="{{ image.alt_text or image.original_filename }}">
+                    </div>
+                    <div class="image-info">
+                        <p class="image-name" title="{{ image.original_filename }}">{{ image.original_filename }}</p>
+                        <p class="image-meta">
+                            {% if image.width and image.height %}{{ image.width }}x{{ image.height }} &bull; {% endif %}
+                            {{ (image.file_size / 1024)|round(1) }}KB
+                        </p>
+                    </div>
+                    <div class="image-actions">
+                        <button class="btn btn-secondary btn-icon copy-url" data-filename="{{ image.filename }}" title="Copy URL">
+                            <span class="material-icons">content_copy</span>
+                        </button>
+                        <button class="btn btn-secondary btn-icon edit-image" data-id="{{ image.id }}" data-alt="{{ image.alt_text or '' }}" title="Edit">
+                            <span class="material-icons">edit</span>
+                        </button>
+                        <button class="btn btn-danger btn-icon delete-image" data-id="{{ image.id }}" data-name="{{ image.original_filename }}" title="Delete">
+                            <span class="material-icons">delete</span>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <span class="material-icons">photo_library</span>
+                <h3>No images yet</h3>
+                <p>Upload your first image to get started</p>
+                <button class="btn btn-primary" id="uploadBtnEmpty" style="margin-top: 16px;">
+                    <span class="material-icons">cloud_upload</span>
+                    Upload Image
+                </button>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Upload Modal -->
+<div class="modal-overlay" id="uploadModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Upload Image</h3>
+            <button class="modal-close" onclick="closeUploadModal()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="upload-area" id="uploadArea">
+                <span class="material-icons">cloud_upload</span>
+                <p>Drag & drop an image here or click to browse</p>
+                <p class="form-hint">Max file size: 5MB. Allowed: PNG, JPG, GIF, WebP</p>
+                <input type="file" id="fileInput" accept="image/png,image/jpeg,image/gif,image/webp" hidden>
+            </div>
+            <div class="upload-preview" id="uploadPreview" style="display: none;">
+                <img id="previewImage" src="" alt="Preview">
+                <button class="btn btn-secondary" onclick="clearPreview()">Clear</button>
+            </div>
+            <div class="form-group" style="margin-top: 16px;">
+                <label for="altText">Alt Text</label>
+                <input type="text" id="altText" class="form-control" placeholder="Describe the image">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeUploadModal()">Cancel</button>
+            <button class="btn btn-primary" id="uploadSubmit" disabled>
+                <span class="material-icons">cloud_upload</span>
+                Upload
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Modal -->
+<div class="modal-overlay" id="editModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Edit Image</h3>
+            <button class="modal-close" onclick="closeEditModal()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="editImageId">
+            <div class="form-group">
+                <label for="editAltText">Alt Text</label>
+                <input type="text" id="editAltText" class="form-control" placeholder="Describe the image">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+            <button class="btn btn-primary" id="editSubmit">
+                <span class="material-icons">save</span>
+                Save
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.image-gallery {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.image-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+    transition: box-shadow 0.2s;
+}
+
+.image-card:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.image-preview {
+    aspect-ratio: 4/3;
+    background: var(--background);
+    overflow: hidden;
+}
+
+.image-preview img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.image-info {
+    padding: 12px;
+}
+
+.image-name {
+    font-size: 14px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.image-meta {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+}
+
+.image-actions {
+    padding: 8px 12px 12px;
+    display: flex;
+    gap: 8px;
+}
+
+.upload-area {
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    padding: 48px 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.upload-area:hover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+}
+
+.upload-area.dragover {
+    border-color: var(--primary);
+    background: var(--primary-light);
+}
+
+.upload-area .material-icons {
+    font-size: 48px;
+    color: var(--primary);
+    margin-bottom: 12px;
+}
+
+.upload-preview {
+    text-align: center;
+}
+
+.upload-preview img {
+    max-width: 100%;
+    max-height: 200px;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/admin/images.js"></script>
+{% endblock %}

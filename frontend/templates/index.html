@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+
+{% block title %}{{ settings.site_name or 'TEG Finance' }} - Fast, Reliable, Affordable Virtual Tax Professionals{% endblock %}
+
+{% block content %}
+<!-- Hero Section - ArkPenny Style -->
+<section class="hero">
+    <div class="container">
+        <div class="hero-tagline">
+            <span>Fast</span>
+            <span>Reliable</span>
+            <span>Affordable</span>
+        </div>
+        <p class="hero-subtitle">Virtual Proactive Tax Professionals</p>
+        <div class="hero-actions">
+            <a href="/contact" class="btn btn-primary btn-large">Get Started</a>
+        </div>
+    </div>
+</section>
+
+<!-- About Section - Centered intro -->
+<section class="services" id="about-intro">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-subtitle">A Different Accounting Firm</span>
+            <h2>Leading Accounting, Tax, and Advisory Services</h2>
+            <p>There's a difference between an Accountant and a Trusted Advisor. We take a proactive approach to Accounting and Tax so that we can become an integral part of your team and help you achieve your goals. We put the priority on being proactive and ensuring you have a Trusted Advisor rather than just an Accountant.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Services Section with alternating layout -->
+<section class="about-preview" id="services">
+    <div class="container">
+        {% for service in services %}
+        {% if loop.index <= 2 %}
+        <div class="about-grid" style="{% if loop.index == 2 %}margin-top: 80px;{% endif %}">
+            {% if loop.index % 2 == 1 %}
+            <div class="about-content">
+                <h2>{{ service.title }}</h2>
+                <h3>A Proactive Approach to Your {{ 'Business' if 'Business' in service.title else 'Finances' }}</h3>
+                <p>{{ service.meta_description or 'We take a proactive approach by making it easy for you to monitor the pulse of your finances, keep track of cash flow, and other essential performance metrics.' }}</p>
+                <a href="/services/{{ service.slug }}" class="btn btn-primary">Learn More</a>
+            </div>
+            <div class="about-image">
+                <img src="https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="{{ service.title }}">
+            </div>
+            {% else %}
+            <div class="about-image">
+                <img src="https://images.unsplash.com/photo-1560472354-b33ff0c44a43?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="{{ service.title }}">
+            </div>
+            <div class="about-content">
+                <h2>{{ service.title }}</h2>
+                <h3>We Go Beyond Just Filing Your {{ 'Tax Returns' if 'Tax' in service.title else 'Documents' }}</h3>
+                <p>{{ service.meta_description or 'Legislation changes and decisions are continuously evolving. It is easy to overlook important deductions or even take inaccurate positions. Let our experts guide you.' }}</p>
+                <a href="/services/{{ service.slug }}" class="btn btn-primary">Learn More</a>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+        {% endfor %}
+    </div>
+</section>
+
+<!-- All Services Grid -->
+<section class="services">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-subtitle">What We Offer</span>
+            <h2>Our Services</h2>
+            <p>Comprehensive financial solutions for individuals and businesses</p>
+        </div>
+
+        <div class="services-grid">
+            {% for service in services %}
+            <a href="/services/{{ service.slug }}" class="service-card">
+                <div class="service-icon">
+                    <span class="material-icons">{{ service.service_icon or 'description' }}</span>
+                </div>
+                <h3>{{ service.title }}</h3>
+                <p>{{ service.meta_description or 'Expert guidance and professional service tailored to your needs.' }}</p>
+                <span class="service-link">
+                    Learn More
+                    <span class="material-icons">arrow_forward</span>
+                </span>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Why Choose Us -->
+<section class="features">
+    <div class="container">
+        <div class="section-header">
+            <span class="section-subtitle">Why Choose Us</span>
+            <h2>The TEG Finance Difference</h2>
+            <p>We bring expertise, integrity, and personalized service to every client relationship</p>
+        </div>
+
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="material-icons">workspace_premium</span>
+                </div>
+                <h3>Experienced Professionals</h3>
+                <p>Our team brings decades of combined experience in accounting, tax, and financial consulting.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="material-icons">groups</span>
+                </div>
+                <h3>Personalized Approach</h3>
+                <p>We take time to understand your unique situation and provide tailored solutions.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="material-icons">trending_up</span>
+                </div>
+                <h3>Proactive Guidance</h3>
+                <p>We don't just react to problems - we help you plan ahead and maximize opportunities.</p>
+            </div>
+
+            <div class="feature-card">
+                <div class="feature-icon">
+                    <span class="material-icons">verified_user</span>
+                </div>
+                <h3>Trusted & Reliable</h3>
+                <p>Build confidence with a financial firm known for integrity and attention to detail.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section - Card overlay style -->
+<section class="cta">
+    <div class="container">
+        <div class="cta-content">
+            <div class="cta-card">
+                <h3>TEG Finance</h3>
+                <h2>NEED HELP?</h2>
+                <a href="/contact" class="cta-link">CLICK HERE to contact our Help Desk</a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Admin{% endblock %} - TEG Finance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/admin.css">
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <span class="material-icons">account_balance</span>
+                <span class="logo-text">TEG Admin</span>
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <span class="material-icons">menu</span>
+            </button>
+        </div>
+
+        <nav class="sidebar-nav">
+            <a href="/admin/dashboard" class="nav-item {% if request.path == '/admin/dashboard' %}active{% endif %}">
+                <span class="material-icons">dashboard</span>
+                <span class="nav-text">Dashboard</span>
+            </a>
+            <a href="/admin/pages" class="nav-item {% if '/admin/pages' in request.path %}active{% endif %}">
+                <span class="material-icons">article</span>
+                <span class="nav-text">Pages</span>
+            </a>
+            <a href="/admin/navigation" class="nav-item {% if request.path == '/admin/navigation' %}active{% endif %}">
+                <span class="material-icons">menu_open</span>
+                <span class="nav-text">Navigation</span>
+            </a>
+            <a href="/admin/images" class="nav-item {% if request.path == '/admin/images' %}active{% endif %}">
+                <span class="material-icons">photo_library</span>
+                <span class="nav-text">Images</span>
+            </a>
+            <a href="/admin/submissions" class="nav-item {% if request.path == '/admin/submissions' %}active{% endif %}">
+                <span class="material-icons">inbox</span>
+                <span class="nav-text">Submissions</span>
+            </a>
+
+            <div class="nav-divider"></div>
+
+            <a href="/admin/settings" class="nav-item {% if request.path == '/admin/settings' %}active{% endif %}">
+                <span class="material-icons">settings</span>
+                <span class="nav-text">Settings</span>
+            </a>
+            <a href="/admin/email-config" class="nav-item {% if request.path == '/admin/email-config' %}active{% endif %}">
+                <span class="material-icons">email</span>
+                <span class="nav-text">Email Config</span>
+            </a>
+        </nav>
+
+        <div class="sidebar-footer">
+            <a href="/" target="_blank" class="nav-item">
+                <span class="material-icons">launch</span>
+                <span class="nav-text">View Site</span>
+            </a>
+            <button class="nav-item logout-btn" id="logoutBtn">
+                <span class="material-icons">logout</span>
+                <span class="nav-text">Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <header class="top-bar">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span class="material-icons">menu</span>
+            </button>
+
+            <div class="page-title">
+                <h1>{% block page_title %}Dashboard{% endblock %}</h1>
+            </div>
+
+            <div class="user-menu">
+                <span class="user-name">{{ user.username }}</span>
+                <div class="user-avatar">
+                    <span class="material-icons">person</span>
+                </div>
+            </div>
+        </header>
+
+        <div class="content-wrapper">
+            {% block content %}{% endblock %}
+        </div>
+    </main>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Confirm Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="confirmTitle">Confirm</h3>
+                <button class="modal-close" id="confirmClose">
+                    <span class="material-icons">close</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage"></p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="confirmCancel">Cancel</button>
+                <button class="btn btn-danger" id="confirmOk">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sidebar toggle
+        const sidebar = document.getElementById('sidebar');
+        const sidebarToggle = document.getElementById('sidebarToggle');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+
+        sidebarToggle.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
+        });
+
+        mobileMenuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('mobile-open');
+        });
+
+        // Restore sidebar state
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+            sidebar.classList.add('collapsed');
+        }
+
+        // Close sidebar on mobile when clicking outside
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 &&
+                !sidebar.contains(e.target) &&
+                !mobileMenuBtn.contains(e.target)) {
+                sidebar.classList.remove('mobile-open');
+            }
+        });
+
+        // Logout
+        document.getElementById('logoutBtn').addEventListener('click', async () => {
+            try {
+                await fetch('/api/auth/logout', { method: 'POST' });
+                window.location.href = '/admin/login';
+            } catch (error) {
+                console.error('Logout failed:', error);
+            }
+        });
+
+        // Toast notifications
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+
+            const icon = type === 'success' ? 'check_circle' :
+                        type === 'error' ? 'error' :
+                        type === 'warning' ? 'warning' : 'info';
+
+            toast.innerHTML = `
+                <span class="material-icons">${icon}</span>
+                <span class="toast-message">${message}</span>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => toast.classList.add('show'), 10);
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        // Confirm dialog
+        function showConfirm(title, message) {
+            return new Promise((resolve) => {
+                const modal = document.getElementById('confirmModal');
+                document.getElementById('confirmTitle').textContent = title;
+                document.getElementById('confirmMessage').textContent = message;
+
+                modal.classList.add('show');
+
+                const handleClose = (result) => {
+                    modal.classList.remove('show');
+                    resolve(result);
+                };
+
+                document.getElementById('confirmOk').onclick = () => handleClose(true);
+                document.getElementById('confirmCancel').onclick = () => handleClose(false);
+                document.getElementById('confirmClose').onclick = () => handleClose(false);
+            });
+        }
+
+        // Expose globally
+        window.showToast = showToast;
+        window.showConfirm = showConfirm;
+    </script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,307 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Email Configuration{% endblock %}
+{% block page_title %}Email Configuration{% endblock %}
+
+{% block content %}
+<div class="email-config-container">
+    <div class="config-grid">
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Gmail SMTP Settings</h3>
+            </div>
+            <div class="card-body">
+                <div class="info-box">
+                    <span class="material-icons">info</span>
+                    <div>
+                        <strong>Gmail App Password Required</strong>
+                        <p>To use Gmail SMTP, you need to create an App Password in your Google Account settings. Regular Gmail passwords won't work.</p>
+                        <a href="https://support.google.com/accounts/answer/185833" target="_blank" rel="noopener">Learn how to create an App Password</a>
+                    </div>
+                </div>
+
+                <form id="emailConfigForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="smtpHost">SMTP Host</label>
+                            <input type="text" id="smtpHost" class="form-control" value="{{ email_config.smtp_host if email_config else 'smtp.gmail.com' }}">
+                        </div>
+                        <div class="form-group">
+                            <label for="smtpPort">SMTP Port</label>
+                            <input type="number" id="smtpPort" class="form-control" value="{{ email_config.smtp_port if email_config else 587 }}">
+                        </div>
+                    </div>
+
+                    <div class="form-check">
+                        <input type="checkbox" id="useTls" {% if not email_config or email_config.use_tls %}checked{% endif %}>
+                        <label for="useTls">Use TLS</label>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="smtpUsername">Gmail Address</label>
+                        <input type="email" id="smtpUsername" class="form-control" value="{{ email_config.smtp_username if email_config else '' }}" placeholder="your-email@gmail.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="smtpPassword">App Password</label>
+                        <input type="password" id="smtpPassword" class="form-control" value="{{ '********' if email_config and email_config.smtp_password else '' }}" placeholder="16-character app password">
+                        <p class="form-hint">Leave unchanged to keep existing password</p>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fromName">From Name</label>
+                        <input type="text" id="fromName" class="form-control" value="{{ email_config.from_name if email_config else 'TEG Finance' }}">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fromEmail">From Email</label>
+                        <input type="email" id="fromEmail" class="form-control" value="{{ email_config.from_email if email_config else '' }}" placeholder="your-email@gmail.com">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="recipientEmail">Recipient Email</label>
+                        <input type="email" id="recipientEmail" class="form-control" value="{{ email_config.recipient_email if email_config else '' }}" placeholder="contact@yourcompany.com">
+                        <p class="form-hint">Contact form submissions will be sent to this address</p>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" class="btn btn-secondary" id="testEmailBtn">
+                            <span class="material-icons">send</span>
+                            Send Test Email
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="material-icons">save</span>
+                            Save Configuration
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h3 class="card-title">Setup Guide</h3>
+            </div>
+            <div class="card-body">
+                <div class="setup-steps">
+                    <div class="setup-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <strong>Enable 2-Step Verification</strong>
+                            <p>Go to your Google Account &gt; Security &gt; 2-Step Verification and enable it.</p>
+                        </div>
+                    </div>
+                    <div class="setup-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <strong>Generate App Password</strong>
+                            <p>In Security &gt; 2-Step Verification &gt; App Passwords, create a new app password for "Mail".</p>
+                        </div>
+                    </div>
+                    <div class="setup-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <strong>Configure Settings</strong>
+                            <p>Enter your Gmail address and the 16-character app password in the form.</p>
+                        </div>
+                    </div>
+                    <div class="setup-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <strong>Test Configuration</strong>
+                            <p>Click "Send Test Email" to verify everything works correctly.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="status-box {% if email_config and email_config.is_configured %}status-success{% else %}status-warning{% endif %}">
+                    {% if email_config and email_config.is_configured %}
+                    <span class="material-icons">check_circle</span>
+                    <span>Email is configured</span>
+                    {% else %}
+                    <span class="material-icons">warning</span>
+                    <span>Email not configured yet</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.email-config-container {
+    max-width: 1200px;
+}
+
+.config-grid {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 24px;
+}
+
+.info-box {
+    display: flex;
+    gap: 16px;
+    padding: 16px;
+    background: #E3F2FD;
+    border-radius: 8px;
+    margin-bottom: 24px;
+}
+
+.info-box .material-icons {
+    color: #1976D2;
+    font-size: 24px;
+}
+
+.info-box p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 4px 0;
+}
+
+.info-box a {
+    color: #1976D2;
+    font-size: 14px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+}
+
+.setup-steps {
+    margin-bottom: 24px;
+}
+
+.setup-step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.step-number {
+    width: 32px;
+    height: 32px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.step-content strong {
+    display: block;
+    margin-bottom: 4px;
+}
+
+.step-content p {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+.status-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px;
+    border-radius: 8px;
+    font-weight: 500;
+}
+
+.status-success {
+    background: #D4EDDA;
+    color: #155724;
+}
+
+.status-warning {
+    background: #FFF3CD;
+    color: #856404;
+}
+
+.status-box .material-icons {
+    font-size: 24px;
+}
+
+@media (max-width: 1024px) {
+    .config-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('emailConfigForm');
+    const testBtn = document.getElementById('testEmailBtn');
+
+    // Save configuration
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const data = {
+            smtp_host: document.getElementById('smtpHost').value,
+            smtp_port: parseInt(document.getElementById('smtpPort').value),
+            use_tls: document.getElementById('useTls').checked,
+            smtp_username: document.getElementById('smtpUsername').value,
+            smtp_password: document.getElementById('smtpPassword').value,
+            from_name: document.getElementById('fromName').value,
+            from_email: document.getElementById('fromEmail').value,
+            recipient_email: document.getElementById('recipientEmail').value
+        };
+
+        try {
+            const response = await fetch('/api/admin/email-config', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                showToast('Email configuration saved', 'success');
+            } else {
+                showToast(result.error || 'Failed to save', 'error');
+            }
+        } catch (error) {
+            showToast('Network error', 'error');
+        }
+    });
+
+    // Test email
+    testBtn.addEventListener('click', async function() {
+        testBtn.disabled = true;
+        testBtn.innerHTML = '<span class="material-icons">hourglass_empty</span> Sending...';
+
+        try {
+            const response = await fetch('/api/admin/email-config/test', {
+                method: 'POST'
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                showToast('Test email sent successfully!', 'success');
+            } else {
+                showToast(result.error || 'Failed to send test email', 'error');
+            }
+        } catch (error) {
+            showToast('Network error', 'error');
+        } finally {
+            testBtn.disabled = false;
+            testBtn.innerHTML = '<span class="material-icons">send</span> Send Test Email';
+        }
+    });
+});
+</script>
+{% endblock %}

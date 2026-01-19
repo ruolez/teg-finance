@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ settings.site_name or 'TEG Finance' }}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ settings.meta_description or 'Professional financial services including tax preparation, business accounting, and financial consulting.' }}{% endblock %}">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/static/css/style.css">
+
+    {% block head %}{% endblock %}
+</head>
+<body>
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header-top">
+            <div class="container">
+                <div class="header-social">
+                    {% if settings.facebook_url %}
+                    <a href="{{ settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">
+                        <span class="material-icons">facebook</span>
+                    </a>
+                    {% else %}
+                    <a href="#" aria-label="Facebook">
+                        <span class="material-icons">facebook</span>
+                    </a>
+                    {% endif %}
+                    {% if settings.twitter_url %}
+                    <a href="{{ settings.twitter_url }}" target="_blank" rel="noopener" aria-label="Twitter">
+                        <span class="material-icons">alternate_email</span>
+                    </a>
+                    {% else %}
+                    <a href="#" aria-label="Twitter">
+                        <span class="material-icons">alternate_email</span>
+                    </a>
+                    {% endif %}
+                    {% if settings.linkedin_url %}
+                    <a href="{{ settings.linkedin_url }}" target="_blank" rel="noopener" aria-label="LinkedIn">
+                        <span class="material-icons">work</span>
+                    </a>
+                    {% else %}
+                    <a href="#" aria-label="LinkedIn">
+                        <span class="material-icons">work</span>
+                    </a>
+                    {% endif %}
+                    {% if settings.instagram_url %}
+                    <a href="{{ settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">
+                        <span class="material-icons">photo_camera</span>
+                    </a>
+                    {% else %}
+                    <a href="#" aria-label="Instagram">
+                        <span class="material-icons">photo_camera</span>
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="header-contact-info">
+                    {% if settings.contact_phone %}
+                    <a href="tel:{{ settings.contact_phone | replace(' ', '') | replace('(', '') | replace(')', '') | replace('-', '') }}">
+                        <span class="material-icons">phone</span>
+                        {{ settings.contact_phone }}
+                    </a>
+                    {% endif %}
+                    {% if settings.contact_email %}
+                    <a href="mailto:{{ settings.contact_email }}">
+                        <span class="material-icons">email</span>
+                        {{ settings.contact_email }}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="header-main">
+            <div class="container">
+                <a href="/" class="logo">
+                    <span class="material-icons">account_balance</span>
+                    <span class="logo-text">{{ settings.site_name or 'TEG Finance' }}</span>
+                </a>
+
+                <nav class="nav" id="nav">
+                    <ul class="nav-list">
+                        {% for item in navigation %}
+                        <li class="nav-item {% if item.children %}has-dropdown{% endif %}">
+                            <a href="{{ item.url or '#' }}" {% if item.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
+                                {{ item.label }}
+                                {% if item.children %}
+                                <span class="material-icons dropdown-icon">expand_more</span>
+                                {% endif %}
+                            </a>
+                            {% if item.children %}
+                            <ul class="dropdown-menu">
+                                {% for child in item.children %}
+                                <li>
+                                    <a href="{{ child.url or '/services/' + child.page_slug }}" {% if child.open_in_new_tab %}target="_blank" rel="noopener"{% endif %}>
+                                        {{ child.label }}
+                                    </a>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+
+                <a href="/contact" class="btn btn-primary header-cta">Get Started</a>
+
+                <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+                    <span class="material-icons">menu</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div class="mobile-menu" id="mobileMenu">
+        <ul class="mobile-nav">
+            {% for item in navigation %}
+            <li>
+                <a href="{{ item.url or '#' }}">{{ item.label }}</a>
+                {% if item.children %}
+                <ul class="mobile-submenu">
+                    {% for child in item.children %}
+                    <li>
+                        <a href="{{ child.url or '/services/' + child.page_slug }}">{{ child.label }}</a>
+                    </li>
+                    {% endfor %}
+                </ul>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        <a href="/contact" class="btn btn-primary" style="width: 100%; margin-top: 20px;">Get Started</a>
+    </div>
+
+    <!-- Main Content -->
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-about">
+                    <a href="/" class="footer-logo">
+                        <span class="material-icons">account_balance</span>
+                        <span>{{ settings.site_name or 'TEG Finance' }}</span>
+                    </a>
+                    <p>{{ settings.site_tagline or 'Fast, Reliable, Affordable Virtual Proactive Tax Professionals' }}</p>
+                    <div class="footer-social">
+                        {% if settings.facebook_url %}
+                        <a href="{{ settings.facebook_url }}" target="_blank" rel="noopener" aria-label="Facebook">
+                            <span class="material-icons">facebook</span>
+                        </a>
+                        {% else %}
+                        <a href="#" aria-label="Facebook">
+                            <span class="material-icons">facebook</span>
+                        </a>
+                        {% endif %}
+                        {% if settings.twitter_url %}
+                        <a href="{{ settings.twitter_url }}" target="_blank" rel="noopener" aria-label="Twitter">
+                            <span class="material-icons">alternate_email</span>
+                        </a>
+                        {% else %}
+                        <a href="#" aria-label="Twitter">
+                            <span class="material-icons">alternate_email</span>
+                        </a>
+                        {% endif %}
+                        {% if settings.linkedin_url %}
+                        <a href="{{ settings.linkedin_url }}" target="_blank" rel="noopener" aria-label="LinkedIn">
+                            <span class="material-icons">work</span>
+                        </a>
+                        {% else %}
+                        <a href="#" aria-label="LinkedIn">
+                            <span class="material-icons">work</span>
+                        </a>
+                        {% endif %}
+                        {% if settings.instagram_url %}
+                        <a href="{{ settings.instagram_url }}" target="_blank" rel="noopener" aria-label="Instagram">
+                            <span class="material-icons">photo_camera</span>
+                        </a>
+                        {% else %}
+                        <a href="#" aria-label="Instagram">
+                            <span class="material-icons">photo_camera</span>
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Services</h4>
+                    <ul>
+                        {% for service in services %}
+                        <li><a href="/services/{{ service.slug }}">{{ service.title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="/">Home</a></li>
+                        <li><a href="/about">About Us</a></li>
+                        <li><a href="/contact">Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-contact">
+                    <h4>Contact Us</h4>
+                    <ul>
+                        {% if settings.contact_phone %}
+                        <li>
+                            <span class="material-icons">phone</span>
+                            <a href="tel:{{ settings.contact_phone | replace(' ', '') | replace('(', '') | replace(')', '') | replace('-', '') }}">{{ settings.contact_phone }}</a>
+                        </li>
+                        {% endif %}
+                        {% if settings.contact_email %}
+                        <li>
+                            <span class="material-icons">email</span>
+                            <a href="mailto:{{ settings.contact_email }}">{{ settings.contact_email }}</a>
+                        </li>
+                        {% endif %}
+                        {% if settings.contact_address %}
+                        <li>
+                            <span class="material-icons">location_on</span>
+                            <span>{{ settings.contact_address }}</span>
+                        </li>
+                        {% endif %}
+                        {% if settings.business_hours %}
+                        <li>
+                            <span class="material-icons">schedule</span>
+                            <span>{{ settings.business_hours }}</span>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>{{ settings.footer_text or '&copy; 2025 TEG Finance. All rights reserved.' }}</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Back to Top Button -->
+    <button class="back-to-top" id="backToTop" aria-label="Back to top">
+        <span class="material-icons">keyboard_arrow_up</span>
+    </button>
+
+    <script src="/static/js/main.js"></script>
+    {% block scripts %}{% endblock %}
+</body>
+</html>

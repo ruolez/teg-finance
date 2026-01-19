@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.meta_title or page.title }} - {{ settings.site_name or 'TEG Finance' }}{% endblock %}
+{% block meta_description %}{{ page.meta_description or settings.meta_description }}{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <h1>{{ page.title }}</h1>
+    </div>
+</section>
+
+<!-- Page Content -->
+<section class="page-content">
+    <div class="container">
+        <div class="content-wrapper">
+            {{ page.content|safe }}
+        </div>
+    </div>
+</section>
+{% endblock %}

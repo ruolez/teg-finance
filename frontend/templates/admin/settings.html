@@ -1,0 +1,250 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Settings{% endblock %}
+{% block page_title %}Site Settings{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <form id="settingsForm">
+        <div class="settings-grid">
+            <!-- General Settings -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">General</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="siteName">Site Name</label>
+                        <input type="text" id="siteName" class="form-control" value="{{ settings.site_name or '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="siteTagline">Tagline</label>
+                        <input type="text" id="siteTagline" class="form-control" value="{{ settings.site_tagline or '' }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Contact Information</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="contactPhone">Phone</label>
+                        <input type="text" id="contactPhone" class="form-control" value="{{ settings.contact_phone or '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="contactEmail">Email</label>
+                        <input type="email" id="contactEmail" class="form-control" value="{{ settings.contact_email or '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="contactAddress">Address</label>
+                        <textarea id="contactAddress" class="form-control" rows="2">{{ settings.contact_address or '' }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="businessHours">Business Hours</label>
+                        <input type="text" id="businessHours" class="form-control" value="{{ settings.business_hours or '' }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Homepage Content -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Homepage</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="heroTitle">Hero Title</label>
+                        <input type="text" id="heroTitle" class="form-control" value="{{ settings.hero_title or '' }}">
+                    </div>
+                    <div class="form-group">
+                        <label for="heroSubtitle">Hero Subtitle</label>
+                        <textarea id="heroSubtitle" class="form-control" rows="2">{{ settings.hero_subtitle or '' }}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="aboutText">About Section Text</label>
+                        <textarea id="aboutText" class="form-control" rows="4">{{ settings.about_text or '' }}</textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Social Media -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Social Media</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="facebookUrl">Facebook URL</label>
+                        <input type="url" id="facebookUrl" class="form-control" value="{{ settings.facebook_url or '' }}" placeholder="https://facebook.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label for="linkedinUrl">LinkedIn URL</label>
+                        <input type="url" id="linkedinUrl" class="form-control" value="{{ settings.linkedin_url or '' }}" placeholder="https://linkedin.com/...">
+                    </div>
+                    <div class="form-group">
+                        <label for="twitterUrl">Twitter/X URL</label>
+                        <input type="url" id="twitterUrl" class="form-control" value="{{ settings.twitter_url or '' }}" placeholder="https://twitter.com/...">
+                    </div>
+                </div>
+            </div>
+
+            <!-- SEO & Footer -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">SEO & Footer</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label for="metaDescription">Default Meta Description</label>
+                        <textarea id="metaDescription" class="form-control" rows="3" maxlength="160">{{ settings.meta_description or '' }}</textarea>
+                        <p class="form-hint">Max 160 characters. Used when pages don't have their own description.</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="footerText">Footer Text</label>
+                        <input type="text" id="footerText" class="form-control" value="{{ settings.footer_text or '' }}">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Settings -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Security</h3>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label>Two-Factor Authentication</label>
+                        <div class="security-status">
+                            {% if user_data.totp_enabled %}
+                            <span class="badge badge-success">
+                                <span class="material-icons">check</span>
+                                Enabled
+                            </span>
+                            <button type="button" class="btn btn-secondary" id="disable2faBtn">Disable 2FA</button>
+                            {% else %}
+                            <span class="badge badge-warning">
+                                <span class="material-icons">warning</span>
+                                Disabled
+                            </span>
+                            <button type="button" class="btn btn-primary" id="setup2faBtn">Enable 2FA</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="settings-actions">
+            <button type="submit" class="btn btn-primary">
+                <span class="material-icons">save</span>
+                Save Settings
+            </button>
+        </div>
+    </form>
+</div>
+
+<!-- 2FA Setup Modal -->
+<div class="modal-overlay" id="setup2faModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3>Setup Two-Factor Authentication</h3>
+            <button class="modal-close" onclick="close2faModal()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="setup-2fa-steps">
+                <div class="step">
+                    <p><strong>1.</strong> Scan this QR code with your authenticator app (Google Authenticator, Authy, etc.)</p>
+                    <div class="qr-code" id="qrCode"></div>
+                </div>
+                <div class="step">
+                    <p><strong>2.</strong> Enter the 6-digit code from your app to verify:</p>
+                    <div class="form-group">
+                        <input type="text" id="verify2faCode" class="form-control" placeholder="000000" maxlength="6" pattern="[0-9]{6}">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="close2faModal()">Cancel</button>
+            <button class="btn btn-primary" id="verify2faBtn">
+                <span class="material-icons">check</span>
+                Verify & Enable
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.settings-container {
+    max-width: 1200px;
+}
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 24px;
+    margin-bottom: 24px;
+}
+
+.settings-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.security-status {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-top: 8px;
+}
+
+.security-status .badge {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+}
+
+.security-status .badge .material-icons {
+    font-size: 16px;
+}
+
+.setup-2fa-steps .step {
+    margin-bottom: 24px;
+}
+
+.qr-code {
+    text-align: center;
+    padding: 20px;
+    background: white;
+    border-radius: 8px;
+    margin-top: 12px;
+}
+
+.qr-code img {
+    max-width: 200px;
+}
+
+#verify2faCode {
+    text-align: center;
+    font-size: 24px;
+    letter-spacing: 8px;
+    font-weight: 600;
+}
+
+@media (max-width: 900px) {
+    .settings-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/admin/settings.js"></script>
+{% endblock %}

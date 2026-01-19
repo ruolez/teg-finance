@@ -1,0 +1,208 @@
+{% extends "admin/base_admin.html" %}
+
+{% block title %}Navigation{% endblock %}
+{% block page_title %}Navigation Menu{% endblock %}
+
+{% block content %}
+<div class="navigation-container">
+    <div class="card">
+        <div class="card-header">
+            <h2 class="card-title">Menu Items</h2>
+            <button class="btn btn-primary" id="addItemBtn">
+                <span class="material-icons">add</span>
+                Add Item
+            </button>
+        </div>
+        <div class="card-body">
+            <p class="form-hint" style="margin-bottom: 16px;">Drag items to reorder. Changes are saved automatically.</p>
+
+            <div class="nav-items-list" id="navItemsList">
+                {% for item in items %}
+                <div class="nav-item-row" data-id="{{ item.id }}" data-parent="{{ item.parent_id or '' }}">
+                    <div class="nav-item-drag">
+                        <span class="material-icons">drag_indicator</span>
+                    </div>
+                    <div class="nav-item-content">
+                        <strong>{{ item.label }}</strong>
+                        <span class="nav-item-url">
+                            {% if item.page_slug %}
+                            /{{ item.page_slug }}
+                            {% elif item.url %}
+                            {{ item.url }}
+                            {% else %}
+                            (No URL)
+                            {% endif %}
+                        </span>
+                    </div>
+                    <div class="nav-item-badges">
+                        {% if not item.is_visible %}
+                        <span class="badge badge-warning">Hidden</span>
+                        {% endif %}
+                        {% if item.open_in_new_tab %}
+                        <span class="badge badge-info">New Tab</span>
+                        {% endif %}
+                    </div>
+                    <div class="nav-item-actions">
+                        <button class="btn btn-secondary btn-icon edit-nav-item" data-item='{{ item|tojson }}' title="Edit">
+                            <span class="material-icons">edit</span>
+                        </button>
+                        <button class="btn btn-danger btn-icon delete-nav-item" data-id="{{ item.id }}" data-label="{{ item.label }}" title="Delete">
+                            <span class="material-icons">delete</span>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if not items %}
+            <div class="empty-state">
+                <span class="material-icons">menu</span>
+                <h3>No menu items yet</h3>
+                <p>Add your first navigation item</p>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Add/Edit Modal -->
+<div class="modal-overlay" id="navModal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="navModalTitle">Add Menu Item</h3>
+            <button class="modal-close" onclick="closeNavModal()">
+                <span class="material-icons">close</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="navItemId">
+
+            <div class="form-group">
+                <label for="navLabel">Label *</label>
+                <input type="text" id="navLabel" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label for="navType">Link Type</label>
+                <select id="navType" class="form-control">
+                    <option value="custom">Custom URL</option>
+                    <option value="page">Link to Page</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="urlGroup">
+                <label for="navUrl">URL</label>
+                <input type="text" id="navUrl" class="form-control" placeholder="https:// or /path">
+            </div>
+
+            <div class="form-group" id="pageGroup" style="display: none;">
+                <label for="navPageId">Select Page</label>
+                <select id="navPageId" class="form-control">
+                    <option value="">-- Select a page --</option>
+                    {% for page in pages %}
+                    <option value="{{ page.id }}">{{ page.title }} (/{% if page.is_service_page %}services/{% endif %}{{ page.slug }})</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="navParentId">Parent Item</label>
+                <select id="navParentId" class="form-control">
+                    <option value="">-- None (Top Level) --</option>
+                    {% for item in items %}
+                    {% if not item.parent_id %}
+                    <option value="{{ item.id }}">{{ item.label }}</option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-check">
+                    <input type="checkbox" id="navVisible" checked>
+                    <label for="navVisible">Visible</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" id="navNewTab">
+                    <label for="navNewTab">Open in New Tab</label>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeNavModal()">Cancel</button>
+            <button class="btn btn-primary" id="navSubmit">
+                <span class="material-icons">save</span>
+                Save
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.nav-items-list {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.nav-item-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: white;
+    border-bottom: 1px solid var(--border);
+    cursor: grab;
+}
+
+.nav-item-row:last-child {
+    border-bottom: none;
+}
+
+.nav-item-row:active {
+    cursor: grabbing;
+}
+
+.nav-item-row.dragging {
+    opacity: 0.5;
+    background: var(--primary-light);
+}
+
+.nav-item-drag {
+    color: var(--text-secondary);
+}
+
+.nav-item-content {
+    flex: 1;
+}
+
+.nav-item-content strong {
+    display: block;
+    font-size: 14px;
+}
+
+.nav-item-url {
+    font-size: 12px;
+    color: var(--text-secondary);
+}
+
+.nav-item-badges {
+    display: flex;
+    gap: 8px;
+}
+
+.nav-item-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.form-row {
+    display: flex;
+    gap: 24px;
+}
+</style>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/admin/navigation.js"></script>
+{% endblock %}

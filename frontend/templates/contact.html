@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Contact Us - {{ settings.site_name or 'TEG Finance' }}{% endblock %}
+{% block meta_description %}Get in touch with our team. Schedule a consultation for tax, accounting, and financial services.{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <h1>Contact Us</h1>
+        <p>Get in touch with our team. We're here to help with all your financial needs.</p>
+    </div>
+</section>
+
+<!-- Contact Section -->
+<section class="contact-section">
+    <div class="container">
+        <div class="contact-grid">
+            <!-- Contact Form -->
+            <div class="contact-form-wrapper">
+                <h2>Send Us a Message</h2>
+                <form id="contactForm" class="contact-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Your Name *</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="phone">Phone Number</label>
+                            <input type="tel" id="phone" name="phone">
+                        </div>
+                        <div class="form-group">
+                            <label for="service">Service Interest</label>
+                            <select id="service" name="service_interest">
+                                <option value="">Select a service...</option>
+                                {% for service in services %}
+                                <option value="{{ service.title }}">{{ service.title }}</option>
+                                {% endfor %}
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="subject">Subject</label>
+                        <input type="text" id="subject" name="subject">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Message *</label>
+                        <textarea id="message" name="message" rows="5" required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-large" id="submitBtn">
+                        <span class="btn-text">Send Message</span>
+                        <span class="material-icons">send</span>
+                    </button>
+
+                    <div class="form-message" id="formMessage"></div>
+                </form>
+            </div>
+
+            <!-- Contact Info -->
+            <div class="contact-info">
+                <div class="info-card">
+                    <h3>Contact Information</h3>
+                    <ul class="info-list">
+                        {% if settings.contact_phone %}
+                        <li>
+                            <span class="material-icons">phone</span>
+                            <div>
+                                <strong>Phone</strong>
+                                <a href="tel:{{ settings.contact_phone | replace(' ', '') | replace('(', '') | replace(')', '') | replace('-', '') }}">{{ settings.contact_phone }}</a>
+                            </div>
+                        </li>
+                        {% endif %}
+                        {% if settings.contact_email %}
+                        <li>
+                            <span class="material-icons">email</span>
+                            <div>
+                                <strong>Email</strong>
+                                <a href="mailto:{{ settings.contact_email }}">{{ settings.contact_email }}</a>
+                            </div>
+                        </li>
+                        {% endif %}
+                        {% if settings.contact_address %}
+                        <li>
+                            <span class="material-icons">location_on</span>
+                            <div>
+                                <strong>Address</strong>
+                                <span>{{ settings.contact_address }}</span>
+                            </div>
+                        </li>
+                        {% endif %}
+                        {% if settings.business_hours %}
+                        <li>
+                            <span class="material-icons">schedule</span>
+                            <div>
+                                <strong>Business Hours</strong>
+                                <span>{{ settings.business_hours }}</span>
+                            </div>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </div>
+
+                <div class="info-card highlight">
+                    <h3>Free Consultation</h3>
+                    <p>Schedule a complimentary 30-minute consultation to discuss your financial needs.</p>
+                    {% if settings.contact_phone %}
+                    <a href="tel:{{ settings.contact_phone | replace(' ', '') | replace('(', '') | replace(')', '') | replace('-', '') }}" class="btn btn-primary">
+                        <span class="material-icons">phone</span>
+                        Call Now
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script src="/static/js/contact.js"></script>
+{% endblock %}

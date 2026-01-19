@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Error - TEG Finance</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #16A085;
+            --error: #DC3545;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #F8F9FA;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 20px;
+        }
+        .error-page {
+            max-width: 500px;
+        }
+        .error-icon {
+            font-size: 80px;
+            color: var(--error);
+            margin-bottom: 16px;
+        }
+        h1 {
+            font-size: 28px;
+            margin-bottom: 16px;
+            color: #1A1A1A;
+        }
+        p {
+            color: #5F6368;
+            margin-bottom: 24px;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        .btn:hover {
+            background: #138D75;
+        }
+    </style>
+</head>
+<body>
+    <div class="error-page">
+        <span class="material-icons error-icon">error_outline</span>
+        <h1>Something Went Wrong</h1>
+        <p>We're experiencing technical difficulties. Please try again later or contact us if the problem persists.</p>
+        <a href="/" class="btn">
+            <span class="material-icons">home</span>
+            Go Home
+        </a>
+    </div>
+</body>
+</html>

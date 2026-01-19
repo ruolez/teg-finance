@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - {{ settings.site_name or 'TEG Finance' }}{% endblock %}
+{% block meta_description %}Learn about our financial services firm, our team, and our commitment to excellence in accounting and tax services.{% endblock %}
+
+{% block content %}
+<!-- Page Header -->
+<section class="page-header">
+    <div class="container">
+        <h1>About Us</h1>
+        <p>Learn about our firm and our commitment to your financial success</p>
+    </div>
+</section>
+
+<!-- About Content -->
+<section class="about-content">
+    <div class="container">
+        <div class="about-intro">
+            <h2>Our Story</h2>
+            <p>{{ settings.about_text or 'With decades of combined experience, our team provides comprehensive accounting and tax services to individuals and businesses. We pride ourselves on building lasting relationships with our clients through personalized attention and expert guidance.' }}</p>
+        </div>
+
+        <div class="values-section">
+            <h2>Our Values</h2>
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon">
+                        <span class="material-icons">verified</span>
+                    </div>
+                    <h3>Integrity</h3>
+                    <p>We uphold the highest ethical standards in everything we do, ensuring complete transparency and honesty in all client relationships.</p>
+                </div>
+
+                <div class="value-card">
+                    <div class="value-icon">
+                        <span class="material-icons">school</span>
+                    </div>
+                    <h3>Expertise</h3>
+                    <p>Our team stays current with the latest tax laws, regulations, and best practices to provide you with informed guidance.</p>
+                </div>
+
+                <div class="value-card">
+                    <div class="value-icon">
+                        <span class="material-icons">handshake</span>
+                    </div>
+                    <h3>Client Focus</h3>
+                    <p>Your success is our priority. We take time to understand your unique needs and tailor our services accordingly.</p>
+                </div>
+
+                <div class="value-card">
+                    <div class="value-icon">
+                        <span class="material-icons">speed</span>
+                    </div>
+                    <h3>Responsiveness</h3>
+                    <p>We understand that timing matters. Our team is committed to prompt communication and timely service delivery.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Let's Work Together</h2>
+            <p>Ready to experience the difference of working with a financial firm that truly cares about your success?</p>
+            <a href="/contact" class="btn btn-white btn-large">
+                Schedule Your Consultation
+                <span class="material-icons">arrow_forward</span>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}
