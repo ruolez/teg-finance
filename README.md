@@ -29,7 +29,52 @@ A professional financial services website with admin panel, contact forms, and C
 - Contact form submissions
 - Two-factor authentication (2FA)
 
-## Quick Start
+## Production Installation (Ubuntu Server 24)
+
+### One-Line Install
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/ruolez/teg-finance/main/install.sh | sudo bash
+```
+
+Or download and run manually:
+
+```bash
+wget https://raw.githubusercontent.com/ruolez/teg-finance/main/install.sh
+chmod +x install.sh
+sudo ./install.sh
+```
+
+The installer will:
+- Install Docker, Nginx, and Certbot
+- Clone the repository to `/opt/teg-finance`
+- Generate secure credentials
+- Configure SSL with Let's Encrypt (auto-renewal enabled)
+- Start all services
+
+### Update Existing Installation
+
+```bash
+sudo /opt/teg-finance/install.sh update
+```
+
+This preserves:
+- Database data
+- User uploads
+- Environment configuration (.env)
+- SSL certificates
+
+### Remove Installation
+
+```bash
+sudo /opt/teg-finance/install.sh remove
+```
+
+Completely removes all data, uploads, and SSL certificates.
+
+---
+
+## Local Development
 
 ### 1. Clone and Configure
 
