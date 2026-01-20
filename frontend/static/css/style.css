@@ -21,6 +21,8 @@
     --radius-sm: 4px;
     --radius-md: 8px;
     --radius-lg: 12px;
+    --font-heading: 'Playfair Display', Georgia, serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 /* Reset */
@@ -35,11 +37,15 @@ html {
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--font-body);
     font-size: 16px;
     line-height: 1.6;
     color: var(--text-primary);
     background: var(--surface);
+}
+
+h1, h2, h3 {
+    font-family: var(--font-heading);
 }
 
 img {
@@ -216,6 +222,7 @@ a {
     display: flex;
     align-items: center;
     gap: 12px;
+    font-family: var(--font-heading);
     font-size: 22px;
     font-weight: 700;
     color: var(--text-light);
@@ -389,19 +396,22 @@ a {
 }
 
 .hero-tagline span {
+    font-family: var(--font-heading);
     font-size: 48px;
-    font-weight: 300;
+    font-weight: 600;
     letter-spacing: 2px;
 }
 
 .hero-subtitle {
+    font-family: var(--font-heading);
     font-size: 28px;
-    font-weight: 400;
+    font-weight: 600;
     margin-bottom: 40px;
     letter-spacing: 1px;
 }
 
 .hero-content h1 {
+    font-family: var(--font-heading);
     font-size: 56px;
     font-weight: 700;
     line-height: 1.2;
@@ -450,6 +460,7 @@ a {
 }
 
 .section-header h2 {
+    font-family: var(--font-heading);
     font-size: 42px;
     font-weight: 700;
     color: var(--primary);
@@ -506,6 +517,7 @@ a {
 }
 
 .service-card h3 {
+    font-family: var(--font-heading);
     font-size: 22px;
     font-weight: 600;
     margin-bottom: 16px;
@@ -580,6 +592,7 @@ a {
 }
 
 .feature-card h3 {
+    font-family: var(--font-heading);
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 16px;
@@ -623,6 +636,7 @@ a {
 }
 
 .about-content h2 {
+    font-family: var(--font-heading);
     font-size: 36px;
     font-weight: 700;
     margin-bottom: 16px;
@@ -709,6 +723,7 @@ a {
 }
 
 .cta-card h3 {
+    font-family: var(--font-heading);
     font-size: 18px;
     color: var(--text-secondary);
     margin-bottom: 8px;
@@ -716,6 +731,7 @@ a {
 
 .cta-content h2,
 .cta-card h2 {
+    font-family: var(--font-heading);
     font-size: 42px;
     font-weight: 700;
     margin-bottom: 20px;
@@ -765,6 +781,7 @@ a {
 }
 
 .page-header h1 {
+    font-family: var(--font-heading);
     font-size: 48px;
     font-weight: 700;
     margin-bottom: 16px;
@@ -813,12 +830,14 @@ a {
 }
 
 .main-content h2 {
+    font-family: var(--font-heading);
     font-size: 32px;
     margin-bottom: 20px;
     color: var(--text-primary);
 }
 
 .main-content h3 {
+    font-family: var(--font-heading);
     font-size: 24px;
     margin: 40px 0 20px;
     color: var(--text-primary);
@@ -851,6 +870,7 @@ a {
 }
 
 .cta-box h3 {
+    font-family: var(--font-heading);
     margin: 0 0 12px;
     color: var(--text-light);
 }
@@ -880,6 +900,7 @@ a {
 }
 
 .sidebar-card h3 {
+    font-family: var(--font-heading);
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 20px;
@@ -942,6 +963,7 @@ a {
 }
 
 .contact-form-wrapper h2 {
+    font-family: var(--font-heading);
     font-size: 28px;
     margin-bottom: 30px;
 }
@@ -1028,6 +1050,7 @@ a {
 }
 
 .info-card h3 {
+    font-family: var(--font-heading);
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 20px;
@@ -1079,6 +1102,7 @@ a {
 }
 
 .about-intro h2 {
+    font-family: var(--font-heading);
     font-size: 36px;
     margin-bottom: 24px;
     color: var(--primary);
@@ -1091,6 +1115,7 @@ a {
 }
 
 .values-section h2 {
+    font-family: var(--font-heading);
     text-align: center;
     font-size: 36px;
     margin-bottom: 50px;
@@ -1133,6 +1158,7 @@ a {
 }
 
 .value-card h3 {
+    font-family: var(--font-heading);
     font-size: 20px;
     font-weight: 600;
     margin-bottom: 16px;
@@ -1177,6 +1203,7 @@ a {
     display: flex;
     align-items: center;
     gap: 12px;
+    font-family: var(--font-heading);
     font-size: 22px;
     font-weight: 700;
     color: var(--text-light);
@@ -1196,6 +1223,7 @@ a {
 
 .footer-links h4,
 .footer-contact h4 {
+    font-family: var(--font-heading);
     font-size: 18px;
     font-weight: 600;
     margin-bottom: 24px;
